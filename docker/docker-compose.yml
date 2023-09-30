@@ -1,0 +1,35 @@
+services:
+  unscented:
+    build: 
+      context: ./
+      dockerfile: Dockerfile
+    network_mode: host
+    working_dir: /robot/
+    user: user
+
+
+    # Comment this deploy section if not using nvidia GPU
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+    privileged: true
+    ipc: host # allow X11 MITSHM shared memory - required for cv.imshow
+    environment:
+      # For GUI & Display
+      - XAUTHORITY=/tmp/.docker.xauth
+      - DISPLAY=${DISPLAY}
+      - NVIDIA_VISIBLE_DEVICES=all  # Comment this line if not using nvidia GPU
+      - NVIDIA_DRIVER_CAPABILITIES=all  # Comment this line if not using nvidia GPU
+    volumes:
+      # For GUI
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - /tmp/.docker.xauth:/tmp/.docker.xauth
+      - $HOME/.Xauthority:/home/user/.Xauthority
+      # # For Device sharing
+      # # For source code mounting
+      - ../../:/robot/

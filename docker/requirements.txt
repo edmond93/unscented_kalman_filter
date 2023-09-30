@@ -1,0 +1,2 @@
+# ros2 compilation 
+setuptools==58.2.0
